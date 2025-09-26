@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  minio:
+    image: edilsonathayde/minio:lakehouse-arm64-24-08
+    container_name: minio
+    networks:
+      - net_lakehouse
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio:/data
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  createbucket:
+    hostname: createbucket
+    container_name: createbucket
+    image: edilsonathayde/minio:lakehouse-arm64-24-08
+    depends_on:
+      - minio
+    entrypoint: > 
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} ;
+      /usr/bin/mc mb myminio/landing;
+      /usr/bin/mc mb myminio/bronze;
+      /usr/bin/mc mb myminio/silver;
+      /usr/bin/mc mb myminio/gold;
+      "
+    networks:
+      - net_lakehouse
+
+networks:
+  net_lakehouse:
+    external: true
+
+volumes:
+  minio:
