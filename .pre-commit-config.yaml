@@ -1,0 +1,38 @@
+repos:
+  - repo: http://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace  # Remove espaços em branco no final das linhas.
+      - id: check-added-large-files  # Verifica se há arquivos grandes sendo adicionados.
+        args: ['--maxkb=5000']  # Define o limite de tamanho de 5000 KB.
+      - id: check-yaml  # Verifica a validade dos arquivos YAML.
+      - id: check-json  # Verifica a validade dos arquivos JSON.
+
+  - repo: http://github.com/psf/black
+    rev: 24.2.0
+    hooks:
+      - id: black  # Formata o código Python de acordo com o padrão Black.
+        stages: [commit]  # Executa o Black na fase de commit.
+
+  - repo: http://github.com/pre-commit/mirrors-sort
+    rev: v5.10.1
+    hooks:
+      - id: isort  # Organiza as importações no código Python.
+        stages: [commit]  # Executa o isort na fase de commit.
+
+  - repo: http://github.com/pre-commit/mirrors-mypy
+    rev: v1.4.0
+    hooks:
+      - id: mypy  # Executa o verificador de tipos estáticos do Python.
+
+  - repo: http://github.com/pre-commit/mirrors-pylint
+    rev: v2.6.0
+    hooks:
+      - id: pylint  # Executa o linting do código Python.
+        additional_dependencies: ['python-dotenv']  # Adiciona dependências extras para o Pylint.
+
+  - repo: http://github.com/PyCQA/bandit
+    rev: v1.7.4
+    hooks:
+      - id: bandit  # Verifica vulnerabilidades de segurança no código.
+        args: ["--skip=B101"]  # Ignora o aviso B101 sobre o uso de funções assert.
